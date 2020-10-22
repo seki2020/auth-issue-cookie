@@ -97,27 +97,7 @@
         .querySelector("#auth-sign-in")
         .addEventListener("click", function () {
           var provider = new firebase.auth.GoogleAuthProvider();
-          firebase
-            .auth()
-            .signInWithPopup(provider)
-            .then(function (result) {
-              // This gives you a Google Access Token. You can use it to access the Google API.
-              var token = result.credential.accessToken;
-              // The signed-in user info.
-              var { email, uid } = result.user.toJSON();
-              document.querySelector("#auth-id").textContent = uid;
-              document.querySelector("#auth-email").textContent = email;
-            })
-            .catch(function (error) {
-              // Handle Errors here.
-              var errorCode = error.code;
-              var errorMessage = error.message;
-              // The email of the user's account used.
-              var email = error.email;
-              // The firebase.auth.AuthCredential type that was used.
-              var credential = error.credential;
-              // ...
-            });
+          firebase.auth().signInWithRedirect(provider);
         });
 
       document.addEventListener("DOMContentLoaded", function () {
@@ -137,6 +117,28 @@
           loadEl.textContent = `Firebase SDK loaded with ${features.join(
             ", "
           )}`;
+
+          firebase
+            .auth()
+            .getRedirectResult()
+            .then(function (result) {
+              // This gives you a Google Access Token. You can use it to access the Google API.
+              var token = result.credential.accessToken;
+              // The signed-in user info.
+              var { email, uid } = result.user.toJSON();
+              document.querySelector("#auth-id").textContent = uid;
+              document.querySelector("#auth-email").textContent = email;
+            })
+            .catch(function (error) {
+              // Handle Errors here.
+              var errorCode = error.code;
+              var errorMessage = error.message;
+              // The email of the user's account used.
+              var email = error.email;
+              // The firebase.auth.AuthCredential type that was used.
+              var credential = error.credential;
+              // ...
+            });
         } catch (e) {
           console.error(e);
           loadEl.textContent =
